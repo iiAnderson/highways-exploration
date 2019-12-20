@@ -4,3 +4,5 @@ url
 venv
 .metaflow
 .vscode
+__pycache__
+.DS_Store
