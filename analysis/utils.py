@@ -16,9 +16,15 @@ def read_data(data_dir, csv_file=None):
 
     return df
 
-def get_all_files(data_dir):
+def get_all_files(data_dir, filter_str=None):
     path = f"data/{data_dir}"
 
-    return glob.glob(f"{path}/*.csv")
+    files = glob.glob(f"{path}/*.csv")
 
+    if filter_str:
+        files = list(filter(lambda x: f"{filter_str} " in x or f"{filter_str}a " in x, files))
     
+    return files
+
+def get_files_for_motorway(data_dir, motorway):
+    return get_all_files(data_dir, filter_str=motorway)

@@ -2,7 +2,7 @@ from os import listdir
 from os.path import isfile, join
 import pandas as pd
 
-mypath = "output/"
+mypath = "output/m26/"
 
 files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
@@ -27,7 +27,7 @@ for key_file in file_outputs:
 
     concat = []
     for f in list_files:
-        temp_df = pd.read_csv(f"output/{f}", names=cols).iloc[4:]
+        temp_df = pd.read_csv(f"output/m26/{f}", names=cols).iloc[4:]
         temp_df = temp_df[temp_df['Local Date'] != "Local Date"]
 
         concat.append(temp_df)
@@ -35,4 +35,4 @@ for key_file in file_outputs:
 
     combined_csv = pd.concat(concat)
     #export to csv
-    combined_csv.to_csv(f"data/m1/{key_name}.csv")
+    combined_csv.to_csv(f"data/m26/{key_name}.csv")

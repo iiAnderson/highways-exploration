@@ -7,7 +7,7 @@ import numpy as np
 import re
 
 
-class HeatMapTimeByTotalTrafficFlow(FlowSpec):
+class HeatMapTimeByJunctionChangeFlow(FlowSpec):
     motorway = Parameter('motorway',
                       help='Motorway',
                       default="M32")
@@ -34,27 +34,28 @@ class HeatMapTimeByTotalTrafficFlow(FlowSpec):
         for file_name in self.files:
             split_name = file_name.split(" ")
 
-            between_char_index = self.index(split_name, "between")
-            within_char_index = self.index(split_name, "within")
-            tame_char_index = self.index(split_name, "GPS")
+            exit_char_index = self.index(split_name, "exit")
+            access_char_index = self.index(split_name, "access")
+            junc_prefix = ""
 
-            if between_char_index != -1:
-                to_junc = re.sub('[^0-9]','', split_name[between_char_index+1])
+            if exit_char_index != -1:
+                to_junc = re.sub('[^0-9]','', split_name[exit_char_index-2])
+                junc_prefix = "e"
             else:
-                if (within_char_index != -1 and tame_char_index == -1): 
-                    print(split_name)
-                    to_junc = re.sub('[^0-9]','', split_name[within_char_index+1])
+                if access_char_index != -1: 
+                    to_junc = re.sub('[^0-9]','', split_name[access_char_index-2])
+                    junc_prefix = "a"
                 else:
                     continue 
 
-
             direction = self.multiple_contains(file_name, self.dataset_names)
             if direction:
-                datasets[direction].append([to_junc, file_name])
+                datasets[direction].append([to_junc, junc_prefix, file_name])
 
+        print(datasets)
         for key in datasets.keys():
             datasets[key].sort(key=lambda x: int(x[0]), reverse=True)
-        print(datasets)
+
         self.datasets = [[k, v] for k, v in datasets.items()]
 
         self.next(self.process_dataset, foreach='datasets')
@@ -64,18 +65,43 @@ class HeatMapTimeByTotalTrafficFlow(FlowSpec):
         dataset = self.input[1]
         dataset_name = self.input[0]
 
+        junction_partitioned_dataset = {}
+
         for p in dataset:
-            file_name_split = p[1].split("/")
+            file_name_split = p[2].split("/")
             temp_df = read_data(file_name_split[1], file_name_split[2].split(".")[0])
-            p[1] = aggregate_times_by_carraige_flow(temp_df)
 
-        y_axis = dataset[0][1].keys() # times
-        x_axis = [p[0] for p in dataset] # junctions
+            p[2] = aggregate_times_by_carraige_flow(temp_df)
 
-        r = [[] for i in dataset[0][1].keys()]
+            if p[2] != {}:
 
-        for i, t in enumerate(list(dataset[0][1].keys())):
-            for p in dataset:
+                if p[0] in junction_partitioned_dataset:
+                    junction_partitioned_dataset[p[0]].append([p[1], p[2]])
+                else:
+                    junction_partitioned_dataset[p[0]] = [[p[1], p[2]]]
+
+
+        output_dataset = {}
+        # junc_p_d = junction: (access/exit, date dict)
+        for k in junction_partitioned_dataset:
+            print(f"{k}: {len(junction_partitioned_dataset[k])}")
+            if len(junction_partitioned_dataset[k]) >= 2:
+                obj = junction_partitioned_dataset[k]
+
+                if obj[0][0] == "e":
+                    output_dataset[k] = self.calc_junc_change(obj[1][1], obj[0][1])
+                else:
+                    output_dataset[k] = self.calc_junc_change(obj[0][1], obj[1][1])
+
+
+        output_dataset = list(output_dataset.items())
+        y_axis = output_dataset[0][1].keys() # times
+        x_axis = [p[0] for p in output_dataset] # junctions
+
+        r = [[] for i in output_dataset[0][1].keys()]
+
+        for i, t in enumerate(list(output_dataset[0][1].keys())):
+            for p in output_dataset:
                 try:
                     r[i].append(p[1][t])
                 except Exception as e:
@@ -112,7 +138,7 @@ class HeatMapTimeByTotalTrafficFlow(FlowSpec):
                     rotation_mode="anchor")
             fig = plt.gcf()
             fig.set_size_inches(20, 15)
-            plt.savefig(f"img/{self_result['name']}-{self.motorway}.png", dpi=100)
+            plt.savefig(f"img/junc_change/{self_result['name']}-{self.motorway}.png", dpi=100)
 
         self.next(self.end)
 
@@ -132,6 +158,17 @@ class HeatMapTimeByTotalTrafficFlow(FlowSpec):
         except:
             return -1
 
+    def calc_junc_change(self, access, ex):
+        ret_dict = {}
+        # dict time: mean_flow
+        for key in access:
+            try:
+                ret_dict[key] = access[key] - ex[key]
+            except Exception as e:
+                print(access)
+                print(ex)
+                raise e
+        return ret_dict
         
 if __name__ == '__main__':
-    HeatMapTimeByTotalTrafficFlow()
+    HeatMapTimeByJunctionChangeFlow()

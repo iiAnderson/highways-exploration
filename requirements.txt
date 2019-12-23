@@ -1,2 +1,6 @@
 beautifulsoup4
 requests
+matplotlib
+metaflow
+pandas
+numpy
