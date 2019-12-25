@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "m5-cardiff",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::27700" } },
+"features": [
+{ "type": "Feature", "properties": { "identifier": "0EA857C8-71D8-44D6-81B3-804BFEEB6653", "number": "M4 J47" }, "geometry": { "type": "Point", "coordinates": [ 262151.65, 199415.73, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "118F6B89-2A43-4D7A-A262-312D8B25D2D0", "number": "M4 J46" }, "geometry": { "type": "Point", "coordinates": [ 264840.52, 199240.88, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "05C0876E-3BEE-4524-AD3F-C73CD7EFFDC6", "number": "M4 J45" }, "geometry": { "type": "Point", "coordinates": [ 267816.35, 199433.05, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "6AB0B835-27CE-4DF2-BBE7-205B9EDB0EC8", "number": "M4 J44" }, "geometry": { "type": "Point", "coordinates": [ 270161.55, 197717.93, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "A12286E6-36EC-4866-93B0-AC451597410C", "number": "M4 J43" }, "geometry": { "type": "Point", "coordinates": [ 272110.54, 196108.78, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "A85D40E8-9398-4462-B15E-3AD3A3F85116", "number": "M4 J42" }, "geometry": { "type": "Point", "coordinates": [ 272994.58, 194424.18, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "E8CA6746-FAF2-43B8-A6BC-1EAF60946C97", "number": "M4 J41" }, "geometry": { "type": "Point", "coordinates": [ 276020.81, 190566.32, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "6AE3B0F6-C003-4E7C-83A4-3A71B3192C0B", "number": "M4 J40" }, "geometry": { "type": "Point", "coordinates": [ 277413.04, 189570.39, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "514E3950-276E-4C3A-A873-DF20DFDFE9D8", "number": "M4 J39" }, "geometry": { "type": "Point", "coordinates": [ 279024.06, 187098.78, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "A085DFE3-F67D-48EE-9B6A-7110ED5B7760", "number": "M4 J38" }, "geometry": { "type": "Point", "coordinates": [ 279542.43, 186152.17, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "274FB8E1-50AB-4284-A970-28D4ABECA4AC", "number": "M4 J36" }, "geometry": { "type": "Point", "coordinates": [ 290855.1, 182794.47, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "B4A1BDE3-8458-463B-B86A-7E84F4D34805", "number": "M4 J37" }, "geometry": { "type": "Point", "coordinates": [ 282715.68, 181070.95, 0.0 ] } },
+{ "type": "Feature", "properties": { "identifier": "AC503600-DC84-48A1-AA27-F0C57CFB626C", "number": "M4 J35" }, "geometry": { "type": "Point", "coordinates": [ 296120.49, 180446.12, 0.0 ] } }
+]
+}

@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"name": "m5",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "identifier": "0EA857C8-71D8-44D6-81B3-804BFEEB6653", "number": "M4 J47" }, "geometry": { "type": "Point", "coordinates": [ -3.995067764568623, 51.676544338866471 ] } },
+{ "type": "Feature", "properties": { "identifier": "118F6B89-2A43-4D7A-A262-312D8B25D2D0", "number": "M4 J46" }, "geometry": { "type": "Point", "coordinates": [ -3.956136198732777, 51.675627101446693 ] } },
+{ "type": "Feature", "properties": { "identifier": "05C0876E-3BEE-4524-AD3F-C73CD7EFFDC6", "number": "M4 J45" }, "geometry": { "type": "Point", "coordinates": [ -3.913197347104782, 51.678062697679756 ] } },
+{ "type": "Feature", "properties": { "identifier": "6AB0B835-27CE-4DF2-BBE7-205B9EDB0EC8", "number": "M4 J44" }, "geometry": { "type": "Point", "coordinates": [ -3.878660087505827, 51.663197487405895 ] } },
+{ "type": "Feature", "properties": { "identifier": "A12286E6-36EC-4866-93B0-AC451597410C", "number": "M4 J43" }, "geometry": { "type": "Point", "coordinates": [ -3.849907567995428, 51.649184110032053 ] } },
+{ "type": "Feature", "properties": { "identifier": "A85D40E8-9398-4462-B15E-3AD3A3F85116", "number": "M4 J42" }, "geometry": { "type": "Point", "coordinates": [ -3.836524822624001, 51.634245811223863 ] } },
+{ "type": "Feature", "properties": { "identifier": "E8CA6746-FAF2-43B8-A6BC-1EAF60946C97", "number": "M4 J41" }, "geometry": { "type": "Point", "coordinates": [ -3.791455365315914, 51.600251369418004 ] } },
+{ "type": "Feature", "properties": { "identifier": "6AE3B0F6-C003-4E7C-83A4-3A71B3192C0B", "number": "M4 J40" }, "geometry": { "type": "Point", "coordinates": [ -3.771015917074849, 51.591605943309112 ] } },
+{ "type": "Feature", "properties": { "identifier": "514E3950-276E-4C3A-A873-DF20DFDFE9D8", "number": "M4 J39" }, "geometry": { "type": "Point", "coordinates": [ -3.746919275997966, 51.569741749584189 ] } },
+{ "type": "Feature", "properties": { "identifier": "A085DFE3-F67D-48EE-9B6A-7110ED5B7760", "number": "M4 J38" }, "geometry": { "type": "Point", "coordinates": [ -3.739118860770779, 51.561345444801375 ] } },
+{ "type": "Feature", "properties": { "identifier": "274FB8E1-50AB-4284-A970-28D4ABECA4AC", "number": "M4 J36" }, "geometry": { "type": "Point", "coordinates": [ -3.574949072769687, 51.533471444953108 ] } },
+{ "type": "Feature", "properties": { "identifier": "B4A1BDE3-8458-463B-B86A-7E84F4D34805", "number": "M4 J37" }, "geometry": { "type": "Point", "coordinates": [ -3.691668621882681, 51.516347528027147 ] } },
+{ "type": "Feature", "properties": { "identifier": "AC503600-DC84-48A1-AA27-F0C57CFB626C", "number": "M4 J35" }, "geometry": { "type": "Point", "coordinates": [ -3.498372771120136, 51.513358105204176 ] } }
+]
+}
