@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+circle {
+  stroke-width: 1.5px;
+}
+
+line {
+  stroke: #999;
+}
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 1200,
+    height = 600,
+    radius = 6;
+
+var fill = d3.scale.category20();
+
+var whitelist = "m4"
+
+var force = d3.layout.force()
+    // .gravity(0.1)
+    .distance(100)
+    // .charge(-100)
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+function round(n) {
+    return Math.ceil(n/100)*100
+}
+
+d3.csv("eastbound-out.csv", function(error, graph) {
+  if (error) throw error;
+
+    var links = {
+        links: [],
+        nodes: []
+    };
+
+    var nodeLink = {
+        // Junc Name: index
+    }
+    console.log(graph);
+    for(var key in Object.keys(graph[0])) {
+        if(key === '""' || key === ""){
+            continue;
+        }
+
+        var feature = graph[0][key]
+        var junc = key;
+        console.log(junc + " " + feature);
+        var motorwayName = whitelist
+        var junctionName = junc;
+        var splitName = motorwayName + "-" + junctionName;
+
+        if(feature === undefined) continue;
+
+        links.nodes.push({name: splitName, group: junc.match(/\d+(\D*)/)[0], value: feature});
+
+        if (motorwayName in nodeLink) {
+            nodeLink[motorwayName][junctionName] = links.nodes.length - 1;
+        } else {
+            nodeLink[motorwayName] = {}
+            nodeLink[motorwayName][junctionName] = links.nodes.length - 1;
+        }
+        
+        
+    }
+
+    for (var key in nodeLink) {
+        if(nodeLink.hasOwnProperty(key)) {
+            const ordered = Object.keys(nodeLink[key]).sort(function(a, b) {
+                return parseInt(a.match(/\d+/)) - parseInt(b.match(/\d+/));
+            });
+
+            for(var j = 0; j < ordered.length; j++) {
+
+                var indexSourceVal = nodeLink[key][ordered[j]];
+                var indexTargetVal = nodeLink[key][ordered[j+1]];
+
+                if(indexSourceVal == undefined || indexTargetVal == undefined){
+                    continue;
+                }
+
+                links.links.push({source: indexSourceVal, target: indexTargetVal, value: 1})
+            }
+        }
+    }
+
+    console.log(nodeLink);
+    console.log(links);
+    var colours = d3.scale.category10();
+
+    var node = svg.selectAll("circle")
+      .data(links.nodes)
+    .enter().append("circle")
+      .attr("r", radius - .75)
+      .style("stroke", function(d) {
+            console.log(d);
+            return colours(round(d.value));
+      })
+      .style("fill", function(d) {
+            console.log(d);
+            return colours(round(d.value));
+      })
+      .on("mouseover", function(d) {	
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(d.name + " : " + d.value)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        })
+      .call(force.drag);
+
+    var link = svg.selectAll("line")
+        .data(links.links)
+        .enter().append("line");
+
+    force
+      .nodes(links.nodes)
+      .links(links.links)
+      .on("tick", tick)
+      .start();
+
+    function tick() {
+        node.attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+        .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+
+        link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    }
+
+});
+
+</script>
