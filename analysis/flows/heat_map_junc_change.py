@@ -1,5 +1,5 @@
-from utils import get_all_files, read_data, get_files_for_motorway
-from tools import aggregate_times_by_carraige_flow
+from ..utils import get_all_files, read_data, get_files_for_motorway
+from ..tools import aggregate_times_by_carraige_flow
 from metaflow import FlowSpec, step, Parameter
 import matplotlib.pyplot as plt
 import numpy as np 
@@ -139,13 +139,6 @@ class HeatMapTimeByJunctionChangeFlow(FlowSpec):
             fig = plt.gcf()
             fig.set_size_inches(20, 15)
             plt.savefig(f"img/junc_change/{self_result['name']}-{self.motorway}.png", dpi=100)
-
-            df = pd.DataFrame(self_result["data"])
-            df.columns = self_result['x_axis']
-            df.insert(0, column='Time', value=self_result['y_axis'])
-
-            
-            df.to_csv(f"csv_out/heat_map_junc_change/{self_result['name']}-out.csv")
 
         self.next(self.end)
 

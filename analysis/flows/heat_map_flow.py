@@ -1,5 +1,5 @@
-from utils import get_all_files, read_data, get_files_for_motorway
-from tools import aggregate_times_by_carraige_flow
+from ..utils import get_all_files, read_data, get_files_for_motorway
+from ..tools import aggregate_times_by_carraige_flow
 from metaflow import FlowSpec, step, Parameter
 import matplotlib.pyplot as plt
 import numpy as np 
@@ -115,20 +115,6 @@ class HeatMapTimeByTotalTrafficFlow(FlowSpec):
             fig.set_size_inches(20, 15)
             plt.savefig(f"img/{self_result['name']}-{self.motorway}.png", dpi=100)
 
-            vals = [0 for x in range(0, len(self_result['data'][0]))]
-            for row in self_result['data']:
-                for i in range(0, len(row)):
-                    vals[i] = vals[i] + float(row[i])
-            
-            for i in range(0, len(vals)):
-                vals[i] = vals[i] / len(self_result['data'])
-
-
-            df = pd.DataFrame([vals])
-            df.columns = self_result['x_axis']
-
-            
-            df.to_csv(f"csv_out/heat_map/{self_result['name']}-out.csv")
         self.next(self.end)
 
     @step

@@ -24,9 +24,7 @@ var fill = d3.scale.category20();
 var whitelist = "m4"
 
 var force = d3.layout.force()
-    // .gravity(0.1)
-    .distance(100)
-    // .charge(-100)
+    // .distance(100)
     .size([width, height]);
 
 var svg = d3.select("body").append("svg")
@@ -39,6 +37,29 @@ var div = d3.select("body").append("div")
 
 function round(n) {
     return Math.ceil(n/100)*100
+}
+function interpolateColor(color1, color2, factor) {
+    if (arguments.length < 3) { 
+        factor = 0.5; 
+    }
+    var result = color1.slice();
+    for (var i = 0; i < 3; i++) {
+        result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+    }
+    return d3.rgb(result[0], result[1], result[2]);
+};
+function interpolateColors(color1, color2, steps) {
+    var stepFactor = 1 / (steps - 1),
+        interpolatedColorArray = [];
+
+    color1 = color1.match(/\d+/g).map(Number);
+    color2 = color2.match(/\d+/g).map(Number);
+
+    for(var i = 0; i < steps; i++) {
+        interpolatedColorArray.push(interpolateColor(color1, color2, stepFactor * i));
+    }
+
+    return interpolatedColorArray;
 }
 
 d3.csv("eastbound-out.csv", function(error, graph) {
@@ -60,7 +81,6 @@ d3.csv("eastbound-out.csv", function(error, graph) {
 
         var feature = graph[0][key]
         var junc = key;
-        console.log(junc + " " + feature);
         var motorwayName = whitelist
         var junctionName = junc;
         var splitName = motorwayName + "-" + junctionName;
@@ -75,7 +95,6 @@ d3.csv("eastbound-out.csv", function(error, graph) {
             nodeLink[motorwayName] = {}
             nodeLink[motorwayName][junctionName] = links.nodes.length - 1;
         }
-        
         
     }
 
@@ -101,19 +120,17 @@ d3.csv("eastbound-out.csv", function(error, graph) {
 
     console.log(nodeLink);
     console.log(links);
-    var colours = d3.scale.category10();
+    var colours = interpolateColors("rgb(124,252,0)", "rgb(255,0,0)", 10);
 
     var node = svg.selectAll("circle")
       .data(links.nodes)
     .enter().append("circle")
       .attr("r", radius - .75)
       .style("stroke", function(d) {
-            console.log(d);
-            return colours(round(d.value));
+            return colours[parseInt((round(d.value) + "").charAt(0))];
       })
       .style("fill", function(d) {
-            console.log(d);
-            return colours(round(d.value));
+            return colours[parseInt((round(d.value) + "").charAt(0))];
       })
       .on("mouseover", function(d) {	
             div.transition()		
