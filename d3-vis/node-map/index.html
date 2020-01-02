@@ -37,7 +37,7 @@ var div = d3.select("body").append("div")
     .attr("class", "tooltip")				
     .style("opacity", 0);
 
-d3.json("all.geojson", function(error, graph) {
+d3.json("/d3-vis/data/all.geojson", function(error, graph) {
   if (error) throw error;
 
     var links = {

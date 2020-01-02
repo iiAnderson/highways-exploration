@@ -1,6 +1,6 @@
 
 d3.select(window).on("load", function () {
     Network.init();
-    Network.map("eastbound-out.csv", "M4");
+    Network.graph("eastbound-out.csv", "m4");
     Network.clear();
 });
