@@ -1,8 +1,9 @@
-from utils import get_all_files, read_data, get_files_for_motorway
-from tools import aggregate_times_by_carraige_flow
+from ..utils import get_all_files, read_data, get_files_for_motorway
+from ..tools import aggregate_times_by_carraige_flow
 from metaflow import FlowSpec, step, Parameter
 import matplotlib.pyplot as plt
 import numpy as np 
+import pandas as pd
 
 import re
 
@@ -80,11 +81,10 @@ class HeatMapTimeByJunctionChangeFlow(FlowSpec):
                 else:
                     junction_partitioned_dataset[p[0]] = [[p[1], p[2]]]
 
-
         output_dataset = {}
         # junc_p_d = junction: (access/exit, date dict)
         for k in junction_partitioned_dataset:
-            print(f"{k}: {len(junction_partitioned_dataset[k])}")
+            # print(f"{k}: {len(junction_partitioned_dataset[k])}")
             if len(junction_partitioned_dataset[k]) >= 2:
                 obj = junction_partitioned_dataset[k]
 
