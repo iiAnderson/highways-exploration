@@ -1,5 +1,5 @@
-from ..utils import get_all_files, read_data, get_files_for_motorway
-from ..tools import aggregate_times_by_carraige_flow
+from utils import get_all_files, read_data, get_files_for_motorway
+from tools import aggregate_times_by_carraige_flow
 from metaflow import FlowSpec, step, Parameter
 import matplotlib.pyplot as plt
 import numpy as np 
@@ -32,6 +32,7 @@ class HeatMapTimeByJunctionChangeFlow(FlowSpec):
     @step
     def initial_process(self):
         datasets = {name:[] for name in self.dataset_names}
+        test = {name:{} for name in self.dataset_names}
         for file_name in self.files:
             split_name = file_name.split(" ")
 
@@ -53,7 +54,12 @@ class HeatMapTimeByJunctionChangeFlow(FlowSpec):
             if direction:
                 datasets[direction].append([to_junc, junc_prefix, file_name])
 
-        print(datasets)
+                if to_junc in test[direction]:
+                    test[direction][to_junc].append([junc_prefix, file_name])
+                else:
+                    test[direction][to_junc] = [[junc_prefix, file_name]]
+
+        print(test)
         for key in datasets.keys():
             datasets[key].sort(key=lambda x: int(x[0]), reverse=True)
 

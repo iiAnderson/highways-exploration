@@ -5,7 +5,7 @@ var Network = {
     height: 1200,
     radius: 6,
     force: null,
-
+    centered: false,
     svg: null,
 
     div: d3.select("body").append("div")
@@ -92,7 +92,7 @@ var Network = {
             .scale(1200 * 5)
             .translate([Network.width / 2, Network.height / 2]);
 
-        var path = d3.geo.path()
+        Network.path = d3.geo.path()
             .projection(projection)
             .pointRadius(2);
 
@@ -107,29 +107,29 @@ var Network = {
                 .data(subunits.geometries)
                 .enter().append("path")
                 .attr("class", function (d) { return "subunit " + d.id; })
-                .attr("d", path);
+                .attr("d", Network.path);
 
             Network.svg.append("path")
                 .datum(topojson.mesh(uk, uk.objects.subunits, function (a, b) { return a !== b && a.id !== "IRL"; }))
-                .attr("d", path)
+                .attr("d", Network.path)
                 .attr("class", "subunit-boundary");
 
             Network.svg.append("path")
                 .datum(topojson.mesh(uk, uk.objects.subunits, function (a, b) { return a === b && a.id === "IRL"; }))
-                .attr("d", path)
+                .attr("d", Network.path)
                 .attr("class", "subunit-boundary IRL");
 
             Network.svg.selectAll(".subunit-label")
                 .data(subunits.geometries)
                 .enter().append("text")
                 .attr("class", function (d) { return "subunit-label " + d.id; })
-                .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
+                .attr("transform", function (d) { return "translate(" + Network.path.centroid(d) + ")"; })
                 .attr("dy", ".35em")
                 .text(function (d) { return d.properties.name; });
 
             Network.svg.append("path")
                 .datum(places)
-                .attr("d", path)
+                .attr("d", Network.path)
                 .attr("class", "place");
 
             Network.svg.selectAll(".place-label")
@@ -161,7 +161,7 @@ var Network = {
                         .data(js.features)
                         .enter()
                         .append("path")
-                        .attr("d", path)
+                        .attr("d", Network.path)
                         .attr("fill", function (d) {
                             if (d.properties.value === undefined) {
                                 return "#666666";
@@ -182,14 +182,14 @@ var Network = {
         console.log(d)
         var x, y, k;
 
-        if (d && centered !== d) {
-            var centroid = path.centroid(d);
+        if (d && Network.centered !== d) {
+            var centroid = Network.path.centroid(d);
             console.log(centroid);
 
             x = centroid[0] - (Network.width / 2.3);
             y = centroid[1] - (Network.height / 2.5);
             k = 4;
-            centered = d;
+            Network.centered = d;
         } else {
             x = Network.width / 2;
             y = Network.height / 2;
@@ -197,10 +197,10 @@ var Network = {
             centered = null;
         }
 
-        svg.selectAll("path")
-            .classed("active", centered && function (d) { return d === centered; });
+        Network.svg.selectAll("path")
+            .classed("active", Network.centered && function (d) { return d === Network.centered; });
 
-        svg.transition()
+        Network.svg.transition()
             .duration(750)
             .attr("transform", "translate(" + Network.width / 2 + "," + Network.height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
             .style("stroke-width", 1.5 / k + "px");
