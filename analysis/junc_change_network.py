@@ -11,18 +11,18 @@ class Node():
 
         self.next = node
         self.name = name
-        self.data_entry = data_entry
-        self.data_exit = data_exit
-        self.data = data
+        self.data_entry = aggregate_times_by_carraige_flow(data_entry) if data_entry is not None else {}
+        self.data_exit = aggregate_times_by_carraige_flow(data_exit) if data_exit is not None else {}
+        self.data = aggregate_times_by_carraige_flow(data) if data is not None else {}
 
-    def print(self, n=0):
+    def print(self, n=0, single=False):
         print(f" - Node {n}: J{self.name}")
-        print(f"     entry: {self.data_entry is not None}")
-        print(f"     junc: {self.data is not None}")
-        print(f"     exit: {self.data_exit is not None}")
+        print(f"     entry: {self.data_entry}")
+        print(f"     junc: {self.data}")
+        print(f"     exit: {self.data_exit}")
         print("             ")
 
-        if self.next is None:
+        if self.next is None or single:
             print(" END ")
             return
 
@@ -113,6 +113,7 @@ class JunctionChangeNetworkFlow(FlowSpec):
 
         linked_list = None
         prev_node = None
+        i = 0
 
         for junction_key, junction_objects in dataset:
             n = Node(prev_node, junction_key, self.read_object_data(junction_objects, 'a'), self.read_object_data(junction_objects, 'j'), self.read_object_data(junction_objects, 'e'))
@@ -121,23 +122,83 @@ class JunctionChangeNetworkFlow(FlowSpec):
                 linked_list = n
 
             prev_node = n
+            i += 1
 
-        prev_node.print()
+        linked_list.print()
+        times = linked_list.data_entry.keys()
+
+        data = [[] for k in times]
+
+        n_d = self.parse_nodes(prev_node, data, times)
+
+        # prev_node.print()
+        self.data = n_d
+        self.x_axis = self.get_node_labels(prev_node, [])
+        self.y_axis = list(times)
+        self.dataset_name = dataset_name
         self.next(self.join)
 
     @step
     def join(self, inputs):
-        # self.processing_results = [{"data": i.data, "x_axis": i.x_axis, "y_axis": i.y_axis, "name": i.dataset_name} for i in inputs]
+        self.processing_results = [{"data": i.data, "x_axis": i.x_axis, "y_axis": i.y_axis, "name": i.dataset_name} for i in inputs]
         self.next(self.save_plots)
 
     @step
     def save_plots(self):
+
+        for self_result in self.processing_results:
+            fig, ax = plt.subplots()
+            ax.imshow(np.array(self_result['data']))
+
+            ax.set_xticks(np.arange(len(self_result['x_axis'])))
+            ax.set_yticks(np.arange(len(self_result['y_axis'])))
+
+            ax.set_xticklabels(self_result['x_axis'], fontsize=12)
+            ax.set_yticklabels(self_result['y_axis'], fontsize=12)
+
+            plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                    rotation_mode="anchor")
+            fig = plt.gcf()
+            fig.set_size_inches(20, 15)
+            plt.savefig(f"img/network/{self_result['name']}-{self.motorway}.png", dpi=100)
 
         self.next(self.end)
 
     @step
     def end(self):
         pass
+
+    def get_node_labels(self, node, labels):
+
+        labels.append(f"{node.name}j")
+        labels.append(f"{node.name}")
+
+        if node.next is None:
+            return labels
+        else:
+            return self.get_node_labels(node.next, labels)
+
+    def parse_nodes(self, node, data, times):
+
+        for index, hour in enumerate(times):
+
+            if node.data:
+                data[index].append(node.data[hour])
+
+            if node.data_entry and node.data_exit:
+                try:
+                    data[index].append(node.data_entry[hour]-node.data_exit[hour])
+                except Exception as e:
+                    print(data[index])
+                    node.print(single=True)
+                    raise e
+
+
+        if node.next is not None:
+            return self.parse_nodes(node.next, data, times)
+        else:
+            return data
+
 
     def read_object_data(self, junction_objects, key):
 
